@@ -65,6 +65,7 @@ console.log("Data: ", data)
         mode="outlined"
         style={[errors.email && globalStyles.errorInput]}
         value={email}
+        maxLength={50}
         onChangeText={setEmail}
         error={!!errors.email}
       />

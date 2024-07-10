@@ -26,19 +26,19 @@ export default StyleSheet.create({
     width: "15%",
     justifyContent: "flex-end", 
     padding: 10,
-    backgroundColor: "#00FF0036",
+    
   },
   centerSection: {
     width: "45%",
     justifyContent: "flex-end",
     padding: 10,
-    backgroundColor: "#FF00003D",
+    
   },
   rightSection: {
     width: "20%",
     justifyContent: "flex-end",
     padding: 10,
-    backgroundColor: "#1100FF65",
+    
   },
   itemContainer: {
     marginBottom: 10,

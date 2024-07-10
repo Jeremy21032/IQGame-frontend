@@ -7,25 +7,25 @@ const validateEmail = (email) => {
     const errors = {};
     console.log("dentro del validate")
     if (!username) {
-      errors.username = 'Username is required';
+      errors.username = 'Se requiere nombre de usuario.';
     } else if (username.length > 50) {
-      errors.username = 'Username must be less than 50 characters';
+      errors.username = 'El nombre de usuario debe tener menos de 50 caracteres.';
     } else if (/\s/.test(username)) {
-      errors.username = 'Username must not contain spaces';
+      errors.username = 'El nombre de usuario no debe tener espacios.';
     }
     if(!isLogin){
     if (!email) {
-      errors.email = 'Email is required';
+      errors.email = 'Correo electrónico obligatorio.';
     } else if (email.length > 50) {
-      errors.email = 'Email must be less than 50 characters';
+      errors.email = 'El email debe tener menos de 50 caracteres.';
     } else if (!validateEmail(email)) {
-      errors.email = 'Email format is invalid';
+      errors.email = 'El Email no debe tener espacios. ';
     }
     }
     if (!password) {
-      errors.password = 'Password is required';
+      errors.password = 'La contraseña es obligatoria';
     } else if (password.length > 50) {
-      errors.password = 'Password must be less than 50 characters';
+      errors.password = 'La contraseña debe tener menos de 50 caracteres';
     }
   
     setErrors(errors);

@@ -3,8 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { Alert } from "react-native";
 
 export const LOGIN = async (username, password) => {
-  console.log("DATA DE ENTRADA A LOGIN: ", username, password);
-  console.log(API_URL);
+  //console.log("DATA DE ENTRADA A LOGIN: ", username, password);
+  //console.log(API_URL);
   try {
     const response = await fetch(`${API_URL}/users/login`, {
       method: "POST",
@@ -70,41 +70,25 @@ export const GET_GAMES = async () => {
     }
 
     const data = await response.json();
-    console.log("Respuesta de getgames: ", data);
+    //console.log("Respuesta de getgames: ", data);
     return data;
   } catch (error) {
     Alert.alert("Get Games Error", error.message);
   }
 };
-export const UPDATE_PROFILE = async (
-  firstName,
-  lastName,
-  imageBase64,
-  userId
-) => {
-  console.warn({ firstName:firstName, lastName:lastName, imageBase64:imageBase64, userId:userId });
-  if (!firstName || !lastName || !userId) {
-    Alert.alert(
-      "Validation Error",
-      "First Name, Last Name, and User ID are required."
-    );
-    return;
-  }
-
-  const payload = {
-    name: firstName,
-    lastname: lastName,
-    user_id: userId,
-    profileImage: imageBase64,
-  };
-
+export const UPDATE_PROFILE = async (firstName, lastName, profileImage, user_id) => {
   try {
     const response = await fetch(`${API_URL}/users/update-profile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        name: firstName,
+        lastname: lastName,
+        user_id,
+        profileImage,
+      }),
     });
 
     if (!response.ok) {
@@ -112,8 +96,7 @@ export const UPDATE_PROFILE = async (
       throw new Error(errorData.message || "Something went wrong");
     }
 
-    const data = response;
-    console.success("Response", response);
+    const data = await response.json();
     return data;
   } catch (error) {
     Alert.alert("Profile Update Error", error.message);
@@ -146,7 +129,7 @@ export const GET_USER_SCORE = async (user_id) => {
         "Content-Type": "application/json",
       },
     });
-    console.log("Response: ", response);
+    //console.log("Response: ", response);
     let data = {};
     if (!response.ok) {
       const errorData = await response.json();
@@ -155,7 +138,7 @@ export const GET_USER_SCORE = async (user_id) => {
       data = await response.json();
     }
 
-    console.log("Data: ", data);
+    //console.log("Data: ", data);
 
     return data;
   } catch (error) {
@@ -181,5 +164,50 @@ export const GET_ALL_SCORES = async () => {
     return data;
   } catch (error) {
     Alert.alert("Get user Score Error", error.message);
+  }
+};
+
+
+export const REQUEST_RESET_PASSWORD = async (email) => {
+  try {
+    const response = await fetch(`${API_URL}/users/request-reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Something went wrong");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    Alert.alert("Request Reset Error", error.message);
+  }
+};
+
+export const RESET_PASSWORD = async (token, newPassword) => {
+  try {
+    const response = await fetch(`${API_URL}/users/reset-password/${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: newPassword }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Something went wrong");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    Alert.alert("Reset Password Error", error.message);
   }
 };

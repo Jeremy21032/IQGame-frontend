@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, Text, ActivityIndicator } from "react-native-paper";
 import { validate } from "../utils/validations";
 import globalStyles from "../styles/global";
-import * as ScreenOrientation from "expo-screen-orientation";
-import { API_URL } from "@env";
 import { useAuth } from "../context/AuthContext";
 import { LOGIN } from "../services/services";
 
@@ -13,15 +11,15 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Estado de carga
   const { login } = useAuth();
 
   const loginUser = async () => {
     if (!validate(username, "", password, setErrors, true)) return;
     try {
+      setLoading(true); // Activar loader
       const data = await LOGIN(username, password);
-      console.log("DATA LOGIN:", data)
       if (data.isAuthenticated) {
-        console.log("Data: ", data);
         login(data.user);
         navigation.navigate("Home");
       } else {
@@ -29,6 +27,8 @@ export default function LoginScreen({ navigation }) {
       }
     } catch (error) {
       Alert.alert("Login Error", error.message);
+    } finally {
+      setLoading(false); // Desactivar loader
     }
   };
 
@@ -66,11 +66,15 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.errorText}>{errors.password}</Text>
       )}
 
-      <Button mode="contained" onPress={loginUser} style={styles.button}>
-        Login
+      <Button mode="contained" onPress={loginUser} style={styles.button} disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
       </Button>
+      {loading && <ActivityIndicator animating={true} size="large" style={styles.loader} />}
       <Button mode="text" onPress={() => navigation.navigate("Register")}>
         Register
+      </Button>
+      <Button mode="text" onPress={() => navigation.navigate("ForgotPassword")}>
+        Olvidaste tu contraseña? Recuperalo aquí
       </Button>
       <Text style={styles.version}> Version 1.0.0</Text>
     </View>
@@ -88,10 +92,12 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
   },
+  loader: {
+    marginTop: 20,
+  },
   version: {
     color: "#c4c4c4",
     alignSelf: "center",
-    position: "fixed",
-    bottom: "auto",
+    marginTop: 20,
   },
 });

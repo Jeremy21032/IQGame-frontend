@@ -37,7 +37,7 @@ export default function RegisterScreen({ navigation }) {
       if (data.error) {
         throw new Error(data.message || "Something went wrong");
       }
-console.log("Data: ", data)
+//console.log("Data: ", data)
       login(data.user); // Almacena el usuario en el contexto
       navigation.navigate("Home");
     } catch (error) {

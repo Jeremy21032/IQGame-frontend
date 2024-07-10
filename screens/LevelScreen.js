@@ -27,7 +27,7 @@ const LevelScreen = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
-    console.log('Navigation Prop:', navigation);
+    //console.log('Navigation Prop:', navigation);
   }, [navigation]);
 
   useEffect(() => {

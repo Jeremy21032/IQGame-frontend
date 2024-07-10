@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (user) => {
-    console.log("Usuario: ",user)
+    //console.log("Usuario: ",user)
     setState({ isAuthenticated: true, user });
     await AsyncStorage.setItem('isAuthenticated', 'true');
     await AsyncStorage.setItem('user', JSON.stringify(user));

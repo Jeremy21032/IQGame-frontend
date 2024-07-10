@@ -5,7 +5,7 @@ const validateEmail = (email) => {
   
   export const validate = (username, email, password, setErrors, isLogin) => {
     const errors = {};
-    console.log("dentro del validate")
+    //console.log("dentro del validate")
     if (!username) {
       errors.username = 'Username is required';
     } else if (username.length > 50) {

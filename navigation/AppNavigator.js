@@ -7,6 +7,7 @@ import CustomBottomNavigationBar from '../components/CustomBottomNavigationBar';
 import LevelScreen from '../screens/LevelScreen';
 import GameScreen from '../screens/GameScreen';
 import { useAuth } from '../context/AuthContext';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ export default function AppNavigator() {
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         )}

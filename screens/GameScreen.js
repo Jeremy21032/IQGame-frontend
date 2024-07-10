@@ -131,7 +131,7 @@ const GameScreen = () => {
 
   const selectItem = (item) => {
     setSelected(item);
-    console.log(`${item}: `, positions[item]);
+    //console.log(`${item}: `, positions[item]);
     if (positions[item] === "boat") {
       setPositions({
         ...positions,
@@ -155,13 +155,13 @@ const GameScreen = () => {
     } else {
       setSelected(selected === item ? null : item);
     }
-    console.log(`${item} selected`);
+   // console.log(`${item} selected`);
   };
 
   const saveScoreAndExit = async () => {
     try {
       const data = await SAVE_SCORE(user.user_id, timer);
-      console.log("Data resultante: ", data);
+      //console.log("Data resultante: ", data);
       // Aquí puedes redirigir al usuario o realizar otras acciones
       navigation.reset({
         index: 0,

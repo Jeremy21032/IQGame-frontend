@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 200,
+            "server": "mysql-jleon.alwaysdata.net",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "mysql-jleon.alwaysdata.net",
+            "database": "jleon_gamedb",
+            "username": "jleon_free",
+            "password": "xvNwvz9TmO"
+        }
+    ]
+}

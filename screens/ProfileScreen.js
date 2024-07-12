@@ -61,7 +61,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={globalStyles.container}>
-      <Text variant="headlineLarge">Profile</Text>
+      <Text variant="headlineLarge">Perfil</Text>
       <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
         <Avatar.Image
           size={100}

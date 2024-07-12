@@ -72,7 +72,7 @@ const LevelScreen = () => {
 
   return (
     <View style={globalStyles.container}>
-      <Text variant="headlineLarge" style={styles.header}>Select a Level</Text>
+      <Text variant="headlineLarge" style={styles.header}>Selecciona un nivel</Text>
       <FlatList
         data={levels}
         renderItem={renderItem}

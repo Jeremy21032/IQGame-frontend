@@ -291,15 +291,15 @@ const GameScreen = () => {
         }}
       >
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>Rules of the game...</Text>
+          <Text style={styles.modalText}>Reglas del juego...</Text>
           <Text style={styles.modalText}>
-            1. Only the farmer can move the boat.
+            1.  Sólo el granjero puede mover el barco.
           </Text>
           <Text style={styles.modalText}>
-            2. The goat cannot be left with the cabbage.
+            2. La cabra no se puede quedar con la col.
           </Text>
           <Text style={styles.modalText}>
-            3. The wolf cannot be left with the goat.
+            3. El lobo no se puede quedar con la cabra.
           </Text>
           <Button
             title="Close"

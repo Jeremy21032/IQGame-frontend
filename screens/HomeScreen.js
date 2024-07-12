@@ -68,7 +68,7 @@ const HomeScreen = () => {
       <View style={styles.userScoreContainer}>
         {userScore != undefined && (
           <>
-            <Text style={styles.title}>Your Score</Text>
+            <Text style={styles.title}>Tu puntuación</Text>
             <Text style={styles.score}>{userScore.maxPoints}</Text>
           </>
         )}
@@ -76,7 +76,7 @@ const HomeScreen = () => {
       <View style={styles.allScoresContainer}>
         {scores != undefined && (
           <>
-            <Text style={styles.title}>All Scores</Text>
+            <Text style={styles.title}>Tabla de puntuaciones</Text>
             <FlatList
               data={scores}
               renderItem={renderItem}

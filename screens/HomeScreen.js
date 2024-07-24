@@ -25,7 +25,10 @@ const HomeScreen = () => {
     };
 
     lockOrientation();
-    fetchScores();
+    if(user){
+
+      fetchScores();
+    }
 
     return () => {
       // Desbloquea la orientación al salir de la pantalla
@@ -37,7 +40,7 @@ const HomeScreen = () => {
     try {
       setRefreshing(true);
       const allScores = await GET_ALL_SCORES();
-      const userScores = await GET_USER_SCORE(user.user_id);
+      const userScores = await GET_USER_SCORE(user?.user_id);
       if(userScores == undefined || allScores == undefined){
         setScores([]);
         setUserScore([]);

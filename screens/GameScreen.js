@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Button,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, Button } from "react-native";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Modal } from "react-native-paper";
 import backgroundImage from "../assets/background.png";
@@ -13,10 +7,11 @@ import wolfImage from "../assets/wolf.png";
 import goatImage from "../assets/goat.png";
 import cabbageImage from "../assets/cabbage.png";
 import farmerBoatImage from "../assets/farmer_boat.png";
+import starImage from "../assets/star.png"; // Importa la imagen de la estrella
 import { SAVE_SCORE } from "../services/services";
 import { useAuth } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
-import styles from '../styles/GameScreenStyles';
+import styles from "../styles/GameScreenStyles";
 
 const GameScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,6 +20,8 @@ const GameScreen = () => {
   const [timer, setTimer] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const [moves, setMoves] = useState(0); // Estado para rastrear los movimientos
+  const [stars, setStars] = useState(0); // Estado para las estrellas obtenidas
   const { user } = useAuth();
   const navigation = useNavigation();
 
@@ -66,19 +63,34 @@ const GameScreen = () => {
   };
 
   const resetGame = () => {
-    const id = setInterval(() => {
-      setTimer((prevTimer) => prevTimer + 1);
-    }, 1000);
-    setIntervalId(id);
-    setIsPaused(true);
+    // Limpia el temporizador existente si hay uno
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+
+    // Reinicia el temporizador a 0 y movimientos a 0
+    setTimer(0);
+    setMoves(0);
+
+    // Reinicia las posiciones de los personajes y el bote
     setPositions({
       wolf: "left",
       goat: "left",
       cabbage: "left",
       boat: "left",
     });
+
+    // Reinicia otros estados del juego
     setSelected(null);
     setEndGameModalVisible(false);
+
+    // Vuelve a iniciar el temporizador si el juego no está pausado
+    if (!isPaused) {
+      const id = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+      setIntervalId(id);
+    }
   };
 
   const moveBoat = () => {
@@ -103,6 +115,9 @@ const GameScreen = () => {
       return;
     }
 
+    // Incrementa los movimientos del barco
+    setMoves((prevMoves) => prevMoves + 1);
+
     // Mueve el elemento adicional a la sección derecha si el bote está a la derecha
     if (newBoatPosition === "right" && selected) {
       setTimeout(() => {
@@ -113,11 +128,28 @@ const GameScreen = () => {
           };
 
           // Verifica si todos los elementos están en la derecha
-          if (updatedPositions.wolf === "right" &&
-              updatedPositions.goat === "right" &&
-              updatedPositions.cabbage === "right") {
+          if (
+            updatedPositions.wolf === "right" &&
+            updatedPositions.goat === "right" &&
+            updatedPositions.cabbage === "right"
+          ) {
+            // Calcula las estrellas obtenidas
+            let earnedStars = 1;
+            if (moves <= 8) {
+              earnedStars = 3;
+            } else if (moves <= 15) {
+              earnedStars = 2;
+            }
+            setStars(earnedStars);
+
             setEndGameModalVisible(true);
             SAVE_SCORE(user.user_id, timer);
+
+            // Detiene el temporizador
+            if (intervalId) {
+              clearInterval(intervalId);
+              setIntervalId(null);
+            }
           }
 
           return updatedPositions;
@@ -131,14 +163,16 @@ const GameScreen = () => {
 
   const selectItem = (item) => {
     setSelected(item);
-    //console.log(`${item}: `, positions[item]);
+    //console.log(${item}: , positions[item]);
     if (positions[item] === "boat") {
       setPositions({
         ...positions,
         [item]: "left",
       });
-    } else if (positions[item] === "left") {
-      const itemsOnBoat = Object.values(positions).filter(pos => pos === 'boat').length;
+    } else if (positions[item] === "left" || positions[item] === "right") {
+      const itemsOnBoat = Object.values(positions).filter(
+        (pos) => pos === "boat"
+      ).length;
       if (itemsOnBoat === 1) {
         alert("Solo un elemento puede estar en el bote a la vez");
         return;
@@ -147,29 +181,27 @@ const GameScreen = () => {
         ...positions,
         [item]: "boat",
       });
-    } else if (positions[item] === "right") {
-      setPositions({
-        ...positions,
-        [item]: 'boat',
-      });
     } else {
       setSelected(selected === item ? null : item);
     }
-   // console.log(`${item} selected`);
+    // console.log(${item} selected);
   };
 
   const saveScoreAndExit = async () => {
     try {
-      const data = await SAVE_SCORE(user.user_id, timer);
-      //console.log("Data resultante: ", data);
-      // Aquí puedes redirigir al usuario o realizar otras acciones
       navigation.reset({
         index: 0,
         routes: [{ name: "Home" }],
       });
     } catch (error) {
-      console.error("Error saving score:", error);
+      console.error("Error exiting game:", error);
     }
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
   return (
@@ -206,29 +238,38 @@ const GameScreen = () => {
 
           <View style={styles.centerSection}>
             {positions.wolf === "boat" && (
-              <Image source={wolfImage} style={styles.characterOnBoatImage} />
+              <Image
+                source={wolfImage}
+                style={[
+                  styles.characterOnBoatImage,
+                  positions.boat === "left" ? styles.left : { right: "25%" },
+                ]}
+              />
             )}
             {positions.goat === "boat" && (
-              <Image source={goatImage} style={styles.characterOnBoatImage} />
+              <Image
+                source={goatImage}
+                style={[
+                  styles.characterOnBoatImage,
+                  positions.boat === "left" ? styles.left : { right: "25%" },
+                ]}
+              />
             )}
             {positions.cabbage === "boat" && (
-              <Image source={cabbageImage} style={styles.characterOnBoatImage} />
+              <Image
+                source={cabbageImage}
+                style={[
+                  styles.characterOnBoatImage,
+                  positions.boat === "left" ? styles.left : { right: "25%" },
+                ]}
+              />
             )}
             <TouchableOpacity
               style={[
                 styles.boatContainer,
                 positions.boat === "left" ? styles.left : styles.right,
               ]}
-              onPress={() => {
-                if (positions.boat === "left" && selected) {
-                  setPositions({
-                    ...positions,
-                    [selected]: "left",
-                  });
-                  setSelected(null);
-                }
-              }}
-              disabled={positions.boat !== "left"}
+              onPress={moveBoat}
             >
               <Image source={farmerBoatImage} style={styles.boatImage} />
             </TouchableOpacity>
@@ -279,9 +320,12 @@ const GameScreen = () => {
           <Text style={styles.buttonText}>⏸️</Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.timer}>
-        <Text style={styles.timerText}>Time: {timer}s</Text>
+        <Text style={styles.timerText}>Movimientos: {moves}</Text>
+        <Text style={styles.timerText}>Time: {formatTime(timer)}</Text>
       </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -293,7 +337,7 @@ const GameScreen = () => {
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Reglas del juego...</Text>
           <Text style={styles.modalText}>
-            1.  Sólo el granjero puede mover el barco.
+            1. Sólo el granjero puede mover el barco.
           </Text>
           <Text style={styles.modalText}>
             2. La cabra no se puede quedar con la col.
@@ -329,7 +373,14 @@ const GameScreen = () => {
       >
         <View style={styles.modalView}>
           <Text style={styles.modalTitle}>Fin del juego</Text>
-          <Text style={styles.modalText}>¡Felicidades! Has completado el juego.</Text>
+          <Text style={styles.modalText}>
+            ¡Felicidades! Has completado el juego.
+          </Text>
+          <View style={styles.starsContainer}>
+            {[...Array(stars)].map((_, index) => (
+              <Image key={index} source={starImage} style={styles.starImage} />
+            ))}
+          </View>
           <Button title="OK" onPress={saveScoreAndExit} />
         </View>
       </Modal>

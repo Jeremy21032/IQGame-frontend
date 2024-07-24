@@ -76,7 +76,12 @@ export const GET_GAMES = async () => {
     Alert.alert("Get Games Error", error.message);
   }
 };
-export const UPDATE_PROFILE = async (firstName, lastName, profileImage, user_id) => {
+export const UPDATE_PROFILE = async (
+  firstName,
+  lastName,
+  profileImage,
+  user_id
+) => {
   try {
     const response = await fetch(`${API_URL}/users/update-profile`, {
       method: "POST",
@@ -167,7 +172,6 @@ export const GET_ALL_SCORES = async () => {
   }
 };
 
-
 export const REQUEST_RESET_PASSWORD = async (email) => {
   try {
     const response = await fetch(`${API_URL}/users/request-reset`, {
@@ -209,5 +213,55 @@ export const RESET_PASSWORD = async (token, newPassword) => {
     return data;
   } catch (error) {
     Alert.alert("Reset Password Error", error.message);
+  }
+};
+
+export const SAVE_PROGRESS = async (user_id, level, completed) => {
+  try {
+    const response = await fetch(`${API_URL}/games/saveprogress`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        level: level,
+        completed: completed,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Something went wrong");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Save Progress Error", error.message);
+  }
+};
+
+export const GET_PROGRESS = async (user_id) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/games/getprogress/${user_id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Something went wrong");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Get Progress Error", error.message);
   }
 };

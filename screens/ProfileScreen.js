@@ -5,15 +5,26 @@ import * as ImagePicker from "expo-image-picker";
 import globalStyles from "../styles/global";
 import { useAuth } from "../context/AuthContext";
 import { UPDATE_PROFILE } from "../services/services";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = () => {
-  const { user, logout, updateUser } = useAuth();
+  const { user, isAuthenticated, logout, updateUser } = useAuth();
   const [firstName, setFirstName] = useState(user?.user_firstName || "");
   const [lastName, setLastName] = useState(user?.user_lastName || "");
   const [profileImage, setProfileImage] = useState(user?.user_image || null);
   const [imageUri, setImageUri] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    }
+  }, [isAuthenticated]);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -45,10 +56,15 @@ const ProfileScreen = () => {
 
     try {
       setLoading(true);
-      const response = await UPDATE_PROFILE(firstName, lastName, imageBase64, user.user_id);
+      const response = await UPDATE_PROFILE(firstName, lastName, imageBase64, user?.user_id);
       if (response) {
         setProfileImage(response.profileImageUrl);
-        updateUser({ ...user, user_firstName: firstName, user_lastName: lastName, user_image: response.profileImageUrl });
+        updateUser({
+          ...user,
+          user_firstName: firstName,
+          user_lastName: lastName,
+          user_image: response.profileImageUrl,
+        });
         Alert.alert("Profile Updated", response.message);
         setLoading(false);
       }
@@ -59,13 +75,35 @@ const ProfileScreen = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    } catch (error) {
+      Alert.alert("Logout Error", error.message);
+    }
+  };
+
+  if (!user) {
+    return <ActivityIndicator size="large" style={styles.loader} />;
+  }
+
   return (
     <View style={globalStyles.container}>
       <Text variant="headlineLarge">Perfil</Text>
       <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
         <Avatar.Image
           size={100}
-          source={imageUri ? { uri: imageUri } : profileImage ? { uri: profileImage } : require("../assets/default_profile.png")}
+          source={
+            imageUri
+              ? { uri: imageUri }
+              : profileImage
+              ? { uri: profileImage }
+              : require("../assets/default_profile.png")
+          }
         />
       </TouchableOpacity>
       <TextInput
@@ -97,11 +135,26 @@ const ProfileScreen = () => {
         onChangeText={setLastName}
       />
 
-      <Button mode="contained" onPress={updateProfile} style={styles.button} disabled={loading}>
+      <Button
+        mode="contained"
+        onPress={updateProfile}
+        style={styles.button}
+        disabled={loading}
+      >
         {loading ? "Updating..." : "Update Profile"}
       </Button>
-      {loading && <ActivityIndicator animating={true} size="large" style={styles.loader} />}
-      <Button mode="outlined" onPress={logout} style={styles.logoutButton}>
+      {loading && (
+        <ActivityIndicator
+          animating={true}
+          size="large"
+          style={styles.loader}
+        />
+      )}
+      <Button
+        mode="outlined"
+        onPress={handleLogout}
+        style={styles.logoutButton}
+      >
         Logout
       </Button>
     </View>

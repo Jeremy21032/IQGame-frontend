@@ -77,8 +77,8 @@ export default StyleSheet.create({
   },
   timer: {
     position: "absolute",
-    bottom: 10,
-    right: 10,
+    top: 10,
+    left: 10,
     backgroundColor: "#fff",
     padding: 5,
     borderRadius: 5,
@@ -115,5 +115,15 @@ export default StyleSheet.create({
   },
   right: {
     right: 10,
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  starImage: {
+    width: 40,
+    height: 40,
+    marginHorizontal: 5,
   },
 });

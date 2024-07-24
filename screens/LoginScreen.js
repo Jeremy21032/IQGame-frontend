@@ -76,7 +76,7 @@ export default function LoginScreen({ navigation }) {
       <Button mode="text" onPress={() => navigation.navigate("ForgotPassword")}>
         Olvidaste tu contraseña? Recuperalo aquí
       </Button>
-      <Text style={styles.version}> Version 1.0.0</Text>
+      <Text style={styles.version}> Version 2.0.0</Text>
     </View>
   );
 }
